@@ -1,5 +1,4 @@
 {
-  //  "files": ["./auto-imports.d.ts"],
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
@@ -8,7 +7,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*" : ["src/*"]
+      "@/*": ["src/*"]
     }
-  }, "include": ["src/**/*"]
+  },
+  "include": [],
+  "exclude": ["src/**/*.d.ts"]
 }
