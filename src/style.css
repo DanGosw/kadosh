@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+@font-face {
+    font-family: 'Rahovets';
+    src: url('@/assets/fonts/Rahovets.eot');
+    src: url('@/assets/fonts/Rahovets.eot?#iefix') format('embedded-opentype'),
+    url('@/assets/fonts/Rahovets.woff2') format('woff2'),
+    url('@/assets/fonts/Rahovets.woff') format('woff'),
+    url('@/assets/fonts/Rahovets.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
     font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
@@ -29,10 +41,15 @@
     --color-primary-950: #3e1d0a;
 }
 
-.items-header::after{
+@theme {
+    --font-info: 'Rahovets', 'sans-serit'
+}
+
+.items-header::after {
     @apply content-["•"] text-blue-500 mx-4
 }
-.items-header{
+
+.items-header {
     @apply font-bold text-xl flex items-center
 }
 
