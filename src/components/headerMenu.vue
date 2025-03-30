@@ -33,11 +33,11 @@ const specialItem = { label: "Inscríbete", special: true };
 </script>
 
 <template>
-    <header class="sticky top-0 h-20 py-2 transition-colors duration-300 z-50" :class="isScrolled ? 'bg-slate-950/70' : 'bg-slate-950/70'">
+    <header class="sticky top-0 h-20 py-2 transition-colors duration-300 z-50" :class="isScrolled ? 'bg-slate-950/70' : 'bg-slate-950/50'">
         <nav class="container mx-auto flex items-center justify-between">
             <!-- Logo -->
             <div aria-description="header logo business" class="flex justify-center">
-                <img src="../assets/kadosh.png" alt="business logo" class="h-16 w-12"/>
+                <img src="../assets/images/kadosh.png" alt="business logo" class="h-16 w-12"/>
             </div>
             <!-- Botón de menú móvil (visible solo en móviles) -->
             <button class="block p-2 md:hidden" @click="toggleMobileMenu" aria-label="Toggle menu">

@@ -28,7 +28,7 @@ const getCssVar = (cssVar: string): string => {
 };
 
 /**
- * Converts a hex (or rgb) color to an rgba() string with the given opacity.
+ * Converts a hex (or rgb) color to a rgba() string with the given opacity.
  */
 const convertToRgba = (color: string, opacity: number): string => {
     const computedColor = getCssVar(color);
@@ -57,15 +57,19 @@ const gradientStyle = computed(() => ({
 <template>
     <div class="relative w-full">
         <img :src="props.urlImage" alt="Background" class="w-full object-contain"/>
-        <div class="absolute inset-0">
-            <section class="order-1 grid h-full grid-cols-2 sm:grid-cols-12" :style="gradientStyle">
-                <article class="col-span-8 p-4">
+        <div class="absolute inset-0 flex flex-col justify-between" :style="gradientStyle">
+            <section class="grid h-full grid-cols-2 sm:grid-cols-12">
+                <article class="col-span-2 p-4">
                     <slot name="description"/>
                 </article>
-                <div class="col-span-4 flex items-center justify-center rounded-br-lg p-5 rounded-se-lg">
+                <div class="col-span-4 flex items-center justify-center rounded-br-lg rounded-se-lg p-5">
                     <slot name="images"/>
                 </div>
             </section>
+            <!-- Bottom description now inherits the gradient background -->
+            <article class="mb-2">
+                <slot name="bottom-description"/>
+            </article>
         </div>
     </div>
 </template>
