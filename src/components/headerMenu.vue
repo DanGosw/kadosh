@@ -24,8 +24,8 @@ const toggleMobileMenu = () => {
 const menuItems = [
     { currentPage: "#about", label: "¿De qué se trata?" },
     // { currentPage: "", label: "Agenda" },
-    { currentPage: "", label: "Nuestro equipo" },
-    { currentPage: "", label: "Ubicanos" }
+    { currentPage: "#team", label: "Nuestro equipo" },
+    { currentPage: "#location", label: "Ubicanos" }
 ];
 
 const specialItem = { label: "Inscríbete", special: true };
@@ -36,9 +36,11 @@ const specialItem = { label: "Inscríbete", special: true };
     <header class="sticky top-0 h-20 py-2 transition-colors duration-300 z-50" :class="isScrolled ? 'bg-slate-950/70' : 'bg-slate-950/50'">
         <nav class="container mx-auto flex items-center justify-between">
             <!-- Logo -->
-            <div aria-description="header logo business" class="flex justify-center">
-                <img src="../assets/images/kadosh.png" alt="business logo" class="h-16"/>
-            </div>
+            <router-link to="/">
+                <div aria-description="header logo business" class="flex justify-center">
+                    <img src="../assets/images/kadosh.png" alt="business logo" class="h-16"/>
+                </div>
+            </router-link>
             <!-- Botón de menú móvil (visible solo en móviles) -->
             <button class="block p-2 md:hidden" @click="toggleMobileMenu" aria-label="Toggle menu">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,12 +50,14 @@ const specialItem = { label: "Inscríbete", special: true };
             <!-- Menú de navegación en resoluciones grandes -->
             <ul class="hidden items-center space-x-2 md:flex">
                 <li v-for="(item, index) in menuItems" :key="index" class="items-header">
-                    <a aria-description="items-header">{{ item.label }}</a>
+                    <router-link :to="{ path:'/', hash: item.currentPage }">
+                        <a aria-description="items-header">{{ item.label }}</a>
+                    </router-link>
                 </li>
-                <li aria-description="items-header">
-                    <a class="flex items-center rounded bg-amber-500 px-4 py-2 text-xl font-bold uppercase">
+                <li aria-description="items-header" class="cursor-handle">
+                    <router-link to="/suscribe" class="flex items-center rounded bg-amber-500 px-4 py-2 text-xl font-bold uppercase">
                         {{ specialItem.label }}
-                    </a>
+                    </router-link>
                 </li>
             </ul>
         </nav>
@@ -62,12 +66,14 @@ const specialItem = { label: "Inscríbete", special: true };
             <div v-if="isMobileMenuOpen" class="mt-2 md:hidden max-h-[50vh] overflow-y-auto">
                 <ul class="flex flex-col p-4 space-y-2" :class="isScrolled ? 'bg-slate-950/70' : 'bg-slate-950/80'">
                     <li v-for="(item, index) in menuItems" :key="index" class="items-header">
-                        <a aria-description="items-header">{{ item.label }}</a>
+                        <router-link :to="{ path:'/', hash: item.currentPage }">
+                            <a aria-description="items-header">{{ item.label }}</a>
+                        </router-link>
                     </li>
-                    <li aria-description="items-header">
-                        <a class="flex items-center rounded bg-amber-500 px-4 py-2 text-xl font-bold uppercase">
+                    <li aria-description="items-header" class="cursor-handle">
+                        <router-link to="/suscribe" class="flex items-center rounded bg-amber-500 px-4 py-2 text-xl font-bold uppercase">
                             {{ specialItem.label }}
-                        </a>
+                        </router-link>
                     </li>
                 </ul>
             </div>
