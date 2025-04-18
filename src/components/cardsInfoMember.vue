@@ -17,16 +17,17 @@ const props = withDefaults(defineProps<InterfaceMembers>(), {
     docType: ""
 });
 
-const convertDate = (data: string | Date | null) => {
-    if (!data) return { birthdate: null };
+const convertDate = (data: string | Date | Date[] | (Date | null)[] | null) => {
+    if ( !data) return { birthdate: null };
 
-    const date = typeof data === "string" ? parseISO(data) : data;
+    const rawDate = Array.isArray(data) ? data[0] : data;
+    if ( !rawDate) return { birthdate: null };
 
+    const date = typeof rawDate === "string" ? parseISO(rawDate) : rawDate;
     return {
-        birthdate: isValid(date) ? format(date, "dd-MM-yyyy") : null
+        birthdate: isValid(date) ? format(date as Date, "dd-MM-yyyy") : null
     };
 };
-
 
 </script>
 
@@ -60,7 +61,7 @@ const convertDate = (data: string | Date | null) => {
             </div>
             <div class="flex items-center gap-1 text-gray-500 dark:text-gray-300">
                 <i-material-symbols-calendar-month-outline-rounded class="text-base"/>
-                <span>{{ convertDate(props.birthdate).birthdate }}</span>
+                <span>{{ convertDate(props.birthdate) }}</span>
             </div>
         </div>
 
