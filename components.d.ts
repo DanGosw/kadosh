@@ -39,6 +39,7 @@ declare module 'vue' {
     InputText: typeof import('primevue/inputtext')['default']
     ITablerClockHour5: typeof import('~icons/tabler/clock-hour5')['default']
     LocationEvent: typeof import('./src/components/locationEvent.vue')['default']
+    PayEventView: typeof import('./src/components/payEventView.vue')['default']
     RadioButton: typeof import('primevue/radiobutton')['default']
     RegisterMembers: typeof import('./src/components/registerMembers.vue')['default']
     RegistersCard: typeof import('./src/components/registersCard.vue')['default']
@@ -46,7 +47,9 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('primevue/select')['default']
     TeamContent: typeof import('./src/components/teamContent.vue')['default']
+    TimerToEvent: typeof import('./src/components/timerToEvent.vue')['default']
     Toast: typeof import('primevue/toast')['default']
+    ViewPaymentMethods: typeof import('./src/components/viewPaymentMethods.vue')['default']
   }
   export interface ComponentCustomProperties {
     KeyFilter: typeof import('primevue/keyfilter')['default']

@@ -4,17 +4,26 @@ import { ref } from "vue";
 import { useMembersStore } from "@/stores/storeMembers.ts";
 import Drawer from "primevue/drawer";
 import CardsInfoMember from "@/components/cardsInfoMember.vue";
+import routes from "@/router/routes.ts";
+import { useRoute } from "vue-router";
+import { storePriceRate } from "@/stores/generalInfoStore.ts";
 
 const visibleDrawer = ref(false);
 const membersStoreOptions = useMembersStore();
+const useStoreTotalRate = storePriceRate();
 
 defineEmits([ "onClickCard" ]);
 defineExpose({ visibleDrawer });
 
+const addMoreMembers = async() => {
+    visibleDrawer.value = false;
+    await routes.push({ name: "suscribe" });
+};
+
 </script>
 
 <template>
-    <Drawer v-model:visible="visibleDrawer" dismissable position="right" >
+    <Drawer v-model:visible="visibleDrawer" dismissable position="right">
         <template #header>
             <div>
                 <p class="p-card-title">
@@ -26,19 +35,22 @@ defineExpose({ visibleDrawer });
             </div>
         </template>
         <div class="grid space-y-2">
-            <cards-info-member v-for="data in  membersStoreOptions.membersData" :key="data.dni" :birthdate="data.birthdate" :dni="data.dni"
-                               :church="data.church" :doc-type="data.docType" :gender="data.gender" :is-member="data.isMember"
-                               :voucher-image="data.voucherImage" :names="data.names" :lastnames="data.lastnames" :phone="data.phone"
-                               @click="$emit('onClickCard', (data))"/>
+            <cards-info-member v-for="data in  membersStoreOptions.membersData" :key="data.doc_num" :birthdate="data.birthdate"
+                               :doc_num="data.doc_num" :church="data.church" :doc-type="data.docType" :gender="data.gender"
+                               :is-member="data.isMember" :names="data.names" :lastnames="data.lastnames" :phone="data.phone"
+                               @click="$emit('onClickCard', (data))" :status="data.status"/>
         </div>
         <template #footer>
+            <p class="text-xl mb-2">
+                Total por pagar: <span class="font-bold"> S/ {{ useStoreTotalRate.calculateRate() }}</span>
+            </p>
             <div class="align-buttons-card-footer">
-                <Button label="Agregar otro" severity="contrast" @click="visibleDrawer = false">
+                <Button label="Agregar más" severity="contrast" @click="addMoreMembers()" fluid>
                     <template #icon>
                         <i-material-symbols-list-alt-add/>
                     </template>
                 </Button>
-                <Button label="Pagar">
+                <Button label="Pagar" @click="routes.push({name:'payEvent'})" fluid v-if="useRoute().name !== 'payEvent'">
                     <template #icon>
                         <i-ic-baseline-payments/>
                     </template>

@@ -2,7 +2,7 @@ import toastEventBus from "primevue/toasteventbus";
 import axios, { AxiosError, type AxiosResponse } from "axios";
 import { type ErrorResponse } from "@/api/errorResponse";
 
-let baseURL: string = import.meta.env.VITE_TS_VUE_API;
+let baseURL: string = import.meta.env.VITE_API_APP_URL;
 let has_server_connection: boolean = true;
 
 const axiosInstance = axios.create({ baseURL });
@@ -103,22 +103,12 @@ async function Get(props: ApiProps<any>): Promise<{ response: AxiosResponse }> {
 
 async function Post(props: ApiProps<any>): Promise<{ response: AxiosResponse }> {
     try {
-        const response = await axiosInstance.post<AxiosResponse>(`/api/${ props.route }/`, { ...props.data });
+        const response = await axiosInstance.post<AxiosResponse>(`/api/${ props.route }/`, props.data);
         return { response };
     } catch (error) {
         console.log(error);
-        throw { response: null };
+        throw { error };
     }
 }
 
-async function Put(props: ApiProps<any>): Promise<{ response: AxiosResponse }> {
-    try {
-        const response = await axiosInstance.put<AxiosResponse>(`/api/${ props.route }/`, props.data);
-        return { response };
-    } catch (error) {
-        console.log(error);
-        throw { response: null };
-    }
-}
-
-export const Api = { Get, Post, Put/* Destroy*/ };
+export const Api = { Get, Post };

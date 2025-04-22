@@ -1,78 +1,93 @@
 <script setup lang="ts">
 
-import { ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useMembersStore } from "@/stores/storeMembers.ts";
-import type { InterfaceMembers } from "@/composables/interfaceMembers.ts";
+import type { InterfaceMembers } from "@/composable/interfaceMembers.ts";
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
-import toastEvent from "@/composables/toastEvent.ts";
+import toastEvent from "@/composable/toastEvent.ts";
 import { parseISO, isValid } from "date-fns";
-import type { FileUploadSelectEvent } from "primevue";
 import FormItem from "@/components/formItem.vue";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
+import { storeChurches, storeDocumentType } from "@/stores/generalInfoStore.ts";
+import { type DataDNI, getDataReniec } from "@/composable/getDataReniec.ts";
 
 const refDrawerMembersSaved = ref();
-const refVoucherImage = ref();
-const isClickCard = ref(false);
+const loadingSearch = ref(false);
 const membersStoreOptions = useMembersStore();
-const fileAccept = ref<string>("image/png, image/jpeg, image/jpg");
+const isClickCard = ref(false);
+const wasDniChecked = ref(false);
 
 const props = defineProps({
     closeModal: { default: () => ({}), required: false, type: Function },
-    refreshData: { default: () => ({}), required: false, type: Function },
-    formData: { default: {} as InterfaceMembers, required: false, type: Object }
+    formData: { default: {} as InterfaceMembers, required: false, type: Object },
+    refreshData: { default: () => ({}), required: false, type: Function }
 });
 
 const formMembers = ref<InterfaceMembers>({
-    birthdate: null, church: "", dni: "", docType: "dni", gender: "", isMember: "", lastnames: "", names: "", phone: "",
-    voucherImage: undefined
+    birthdate: null, church: null, doc_num: "", docType: 1, gender: "", isMember: "", lastnames: "", names: "", phone: "", status: true
 });
 
 const validationSchema = ref(yup.object({
     birthdate: yup.string().required("Agrega una fecha valida"),
     church: yup.string().required("Seleccione una iglesia"),
-    dni: yup.string().required("Agregue un DNI"),
     docType: yup.string().required("Seleccione un tipo de identificación"),
+    doc_num: yup.string().required("Agregue un DNI"),
     gender: yup.string().required("Seleccione un género"),
     isMember: yup.string().required("Seleccione a donde pertenece"),
     lastnames: yup.string().required("Agregue sus apellidos"),
     names: yup.string().required("Agregue sus nombres"),
-    phone: yup.string().required("Añada un teléfono valido"),
-    voucherImage: yup.object().shape({
-        file: yup.mixed().required("Img. requerida"), objectURL: yup.string().required("Img. requerida")
-    }).nullable()
+    phone: yup.string().required("Añada un teléfono valido")
 }));
 
 const { handleReset, handleSubmit, errors, setValues } = useForm<InterfaceMembers>({ validationSchema, initialValues: formMembers.value });
 
 const { value: birthdate, handleBlur: birthdateHandle } = useField<Date | Date[] | (Date | null)[] | null>("birthdate");
 const { value: church, handleBlur: churchHandle } = useField<string>("church");
-const { value: dni, handleBlur: dniHandle } = useField<string>("dni");
-const { value: docType, handleBlur: docTypeHandle } = useField<string>("docType");
+const { value: doc_num, handleBlur: doc_numHandle } = useField<string>("doc_num");
+const { value: docType, handleBlur: docTypeHandle } = useField<number>("docType");
 const { value: gender, handleBlur: genderHandle } = useField<string>("gender");
 const { value: isMember, handleBlur: isMemberHandle } = useField<string>("isMember");
 const { value: lastnames, handleBlur: lastnamesHandle } = useField<string>("lastnames");
 const { value: names, handleBlur: namesHandle } = useField<string>("names");
 const { value: phone, handleBlur: phoneHandle } = useField<string>("phone");
-const { value: voucherImage, setValue: setVoucherImage } = useField<object>("voucherImage");
 
-const optionsDocuments = ref([
-    { name: "DNI", code: "dni" },
-    { name: "RUC", code: "ruc" },
-    { name: "SIN DOCUMENTO", code: "sd" }
-]);
+const optionsDocuments = computed(() => storeDocumentType().documentType);
+const optionsChurches = computed(() => storeChurches().churches);
 
-const optionsChurches = ref([
-    { name: "Ninguna", code: "dni" },
-    { name: "Otra", code: "ruc" },
-    { name: "Aguas Claras", code: "x" },
-    { name: "Aguas medio claras", code: "d" },
-    { name: "Aguas medio casi claras", code: "dd" },
-    { name: "Aguas oscuras", code: "w" }
-]);
+const addDataFromReniec = async() => {
+    loadingSearch.value = true;
+    wasDniChecked.value = false;
+    const dataConsult = await getDataReniec(doc_num.value);
 
-const saveNewMember = handleSubmit((values) => {
-    if ( !props.formData?.id) membersStoreOptions.addNewMembers(values, handleReset, isClickCard.value);
+    if ( !dataConsult) {
+        loadingSearch.value = false;
+        toastEvent({ severity: "warn", summary: "DNI no encontrado", message: "No se encontró información con ese DNI." });
+        return;
+    }
+
+    if ("nombre_completo" in dataConsult) {
+        const dataConsultDNI: DataDNI = dataConsult;
+        setValues({
+            names: dataConsultDNI.nombres, lastnames: `${ dataConsultDNI.apellido_paterno } ${ dataConsultDNI.apellido_materno }`
+        }, false);
+        wasDniChecked.value = true;
+    }
+    wasDniChecked.value = true;
+    loadingSearch.value = false;
+};
+
+
+const saveNewMember = handleSubmit(async(values) => {
+    if (docType.value === 1 && !wasDniChecked.value) {
+        toastEvent({ severity: "warn", summary: "Consulta pendiente", message: "Debes hacer la búsqueda por DNI antes de continuar." });
+        return;
+    }
+
+    if ( !props.formData?.id) {
+        membersStoreOptions.addNewMembers(values, clearDataForm, isClickCard.value);
+    }
+
     isClickCard.value = false;
 }, () => {
     toastEvent({ severity: "error", summary: "Error al guardar", message: "Por favor, llene el formulario." });
@@ -85,36 +100,29 @@ const onClickCardMember = (data: InterfaceMembers) => {
 };
 
 const clearDataForm = () => {
-    refVoucherImage.value.remove();
     handleReset();
 };
 
-const setVoucherImageFile = (file: File | null) => {
-    if (file) {
-        setVoucherImage({
-            file,
-            objectURL: URL.createObjectURL(file)
-        });
-    } else {
-        setVoucherImage({});
-    }
-};
-
 const updateVisibilityDrawer = () => refDrawerMembersSaved.value.visibleDrawer = true;
+
+watch(doc_num, () => {
+    wasDniChecked.value = false;
+});
 
 </script>
 
 <template>
     <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
         <FormItem label="Tipo de Documento" cols="12">
-            <Select fluid v-model="docType" @blur="docTypeHandle($event, true)" :options="optionsDocuments" optionLabel="name"
-                    option-value="code" size="large" :disabled="isClickCard"/>
+            <Select fluid v-model="docType" @blur="docTypeHandle($event, true)" :options="optionsDocuments" optionLabel="description"
+                    option-value="id" size="large" :disabled="isClickCard"/>
         </FormItem>
         <FormItem label="DNI" cols="12">
             <InputGroup>
-                <InputText fluid v-model="dni" @blur="dniHandle($event, true)" placeholder="Ingrese nro de DNI" v-key-filter.num
-                           maxlength="8" :invalid="!!errors.dni" size="large" :disabled="isClickCard"/>
-                <Button label="Buscar" :disabled="isClickCard">
+                <InputText fluid v-model="doc_num" @blur="doc_numHandle($event, true)" placeholder="Ingrese nro de DNI" v-key-filter.num
+                           maxlength="8" :invalid="!!errors.doc_num" size="large" :disabled="isClickCard" @keyup.enter="addDataFromReniec"/>
+                <Button label="Buscar" :disabled="isClickCard || loadingSearch" v-if="docType === 1" @click="addDataFromReniec"
+                        :loading="loadingSearch">
                     <template #icon>
                         <i-material-symbols-database-search/>
                     </template>
@@ -122,10 +130,12 @@ const updateVisibilityDrawer = () => refDrawerMembersSaved.value.visibleDrawer =
             </InputGroup>
         </FormItem>
         <FormItem label="Nombres" cols="12">
-            <InputText fluid v-model="names" @blur="namesHandle($event, true)" :invalid="!!errors.names" size="large"/>
+            <InputText fluid v-model="names" @blur="namesHandle($event, true)" :invalid="!!errors.names" size="large"
+                       :disabled="!wasDniChecked && docType === 1"/>
         </FormItem>
         <FormItem label="Apellidos" cols="12">
-            <InputText fluid v-model="lastnames" @blur="lastnamesHandle($event, true)" :invalid="!!errors.lastnames" size="large"/>
+            <InputText fluid v-model="lastnames" @blur="lastnamesHandle($event, true)" :invalid="!!errors.lastnames" size="large"
+                       :disabled="!wasDniChecked && docType === 1"/>
         </FormItem>
         <FormItem label="Género" cols="12">
             <div class="flex flex-wrap items-center gap-4">
@@ -175,14 +185,7 @@ const updateVisibilityDrawer = () => refDrawerMembersSaved.value.visibleDrawer =
         </FormItem>
         <FormItem label="Iglesia" cols="12">
             <Select :options="optionsChurches" fluid v-model="church" @blur="churchHandle($event, true)" filter show-clear size="large"
-                    :invalid="!!errors.church" reset-filter-on-clear reset-filter-on-hide optionLabel="name" option-value="code"/>
-        </FormItem>
-        <FormItem label="Voucher de pago" cols="12" :error="errors.voucherImage">
-            <FileUpload name="voucher" :accept="fileAccept" :max-file-size="1000000" :file-limit="3" class="w-full" ref="refVoucherImage"
-                        @select="(files:FileUploadSelectEvent)=> setVoucherImageFile(files.files[0])" :show-cancel-button="false"
-                        @remove="setVoucherImage({})" v-model="voucherImage" :show-upload-button="false" input-id="voucherImage"
-                        invalid-file-size-message="Peso de imagen invalido" invalid-file-limit-message="1 imagen máximo.">
-            </FileUpload>
+                    :invalid="!!errors.church" reset-filter-on-clear reset-filter-on-hide optionLabel="description" option-value="id"/>
         </FormItem>
 
         <div class="max-cols-4">

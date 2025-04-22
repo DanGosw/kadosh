@@ -7,6 +7,7 @@ import LocationEvent from "@/components/locationEvent.vue";
 import TeamContent from "@/components/teamContent.vue";
 import FooterPage from "@/components/footerPage.vue";
 import AboutEvent from "@/components/aboutEvent.vue";
+import TimerToEvent from "@/components/timerToEvent.vue";
 
 </script>
 
@@ -35,9 +36,7 @@ import AboutEvent from "@/components/aboutEvent.vue";
         </div>
 
         <div class="flex w-full items-center justify-center py-10 text-3xl font-info bg-slate-950 md:text-5xl">
-            <div>
-                !Ya Comenzó¡
-            </div>
+            <timer-to-event/>
         </div>
 
         <content-page gradient-mode="to bottom right" color-via="var(--p-primary-100)" color-from="var(--p-primary-500)"
