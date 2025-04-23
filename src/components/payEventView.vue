@@ -113,7 +113,7 @@ const onValueSelectPayment = (id: number) => {
 </script>
 
 <template>
-    <Card>
+    <Card class="h-full" :style="{ height: 'calc(100vh - 100px)' }">
         <template #title>
             Formulario de Pago
         </template>
@@ -124,10 +124,10 @@ const onValueSelectPayment = (id: number) => {
             <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
                 <div class="max-cols-12">
                     <p class="text-2xl">
-                        Hay {{ storeDataMembers.membersData.length }} persona(s) agregadas
+                        Persona(s) agregadas: {{ storeDataMembers.membersData.length }}
                     </p>
                 </div>
-                <div class="rounded-md bg-slate-400 p-4 text-center text-2xl font-bold max-cols-12">
+                <div class="rounded-md bg-slate-300 p-4 text-center text-2xl font-bold max-cols-12">
                     Total S/. {{ useStoreTotalRate.calculateRate() }}
                 </div>
                 <FormItem label="Método de pago" cols="12" :error="errors.paymentmethod">

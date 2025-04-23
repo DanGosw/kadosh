@@ -37,10 +37,14 @@ import EventTime from "@/components/eventTime.vue";
 
         <div class="flex w-full items-center justify-center py-10 text-center text-3xl font-info bg-slate-950 md:text-5xl">
             <div>
-                "Kadosh es el desafío a aceptar el llamado de Dios a tu vida."
+                KADOSH “Llamados a Santidad”
             </div>
         </div>
         <team-content id="team"/>
         <footer-page id="footer"/>
+        <div class="fixed bottom-5 right-5">
+            <img src="@/assets/images/logoPage.jpg" alt="xd" class="w-28 h-28 opacity-75 rounded-full">
+        </div>
+        
     </main>
 </template>

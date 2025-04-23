@@ -5,13 +5,13 @@
 <template>
     <div class="grid w-full justify-items-center px-4 py-10 bg-slate-950">
         <p class="text-center text-3xl font-info md:text-5xl">
-            ¿Qué es Kadosh?
+            ¿Estás listo para una experiencia que transformará tu vida?
         </p>
-        <p class="mt-10 text-center text-xl">
-            ¡Amor por el prójimo! Nuestra sociedad necesita amor. Un amor que solo Dios puede dar. Un amor que transforma cualquier
-            realidad. Que da un abrazo, pero con un mensaje que lo cambia todo.
+        <p class="mt-10 text-center text-2xl">
+            ¡Únete al Campamento de Jóvenes KADOSH 2025 y prepárate para 5 días de presencia de Dios, amistades reales, y un encuentro
+            poderoso con tu propósito¡
         </p>
-        <p class="mt-4 text-center text-xl">
+        <p class="mt-4 text-center text-2xl">
             Vive la experiencia de Kadosh. Pon al servicio de la comunidad los dones y talentos que Dios te ha dado, mientras que
             impactamos.
         </p>
@@ -24,9 +24,13 @@
                             referrerpolicy="strict-origin-when-cross-origin" allowfullscreen/>
                 </div>
             </div>
-            <div class="w-full px-4 text-center text-2xl font-info md:w-1/2 md:text-4xl">
-                Toda la ciudad sabrá que estos que han trastornado al mundo...
-                <span class="block font-bold">TAMBIÉN HAN LLEGADO A TARAPOTO</span>
+            <div class="w-full px-4 text-center md:w-1/2">
+                <p class="font-info text-2xl md:text-5xl">
+                    ¡NO TE LO PUEDES PERDER!
+                </p>
+                <p class="text-2xl md:text-2xl font-bold">
+                    Prepárate para responder al llamado de Dios a vivir una vida apartada, consagrada, KADOSH.
+                </p>
             </div>
         </div>
     </div>
