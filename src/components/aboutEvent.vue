@@ -18,8 +18,10 @@
         <div class="mt-10 flex w-full flex-col items-center gap-6 md:flex-row">
             <div class="w-full md:w-1/2">
                 <div class="relative w-full pb-80">
-                    <iframe class="absolute top-0 left-0 h-full w-full rounded-2xl" title="YouTube video player" allowfullscreen
-                            src="https://www.youtube.com/embed/Bn4Qi1Wuxb0?si=9nzLjBR2UXK1aR4T"/>
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/cs74Lej97pA?si=U3rQugBWoQxaaOgu"
+                            title="YouTube video player" class="absolute top-0 left-0 h-full w-full rounded-2xl"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen/>
                 </div>
             </div>
             <div class="w-full px-4 text-center text-2xl font-info md:w-1/2 md:text-4xl">

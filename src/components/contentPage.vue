@@ -62,13 +62,13 @@ const gradientStyle = computed(() => ({
                 <article class="col-span-2 p-4">
                     <slot name="description"/>
                 </article>
-                <div class="col-span-4 flex items-center justify-center rounded-br-lg rounded-se-lg p-5">
+                <div class="col-span-4 flex items-center justify-center rounded-br-lg p-5 rounded-se-lg">
                     <slot name="images"/>
                 </div>
             </section>
             <!-- Bottom description now inherits the gradient background -->
             <article class="mb-2">
-                <slot name="bottom-description"/>
+                <slot name="bottom-description" />
             </article>
         </div>
     </div>

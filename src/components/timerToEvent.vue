@@ -50,8 +50,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="text-2xl md:text-6xl font-semibold">
-      {{ countdown.months }}M {{ countdown.days }}d {{ countdown.hours }}h {{ countdown.minutes }}m {{ countdown.seconds }}s
+    <div>
+      {{ countdown.months }}m {{ countdown.days }}d {{ countdown.hours }}h {{ countdown.minutes }}m {{ countdown.seconds }}s
     </div>
 </template>
-
