@@ -6,7 +6,7 @@ import RegisterMembers from "@/components/registerMembers.vue";
 <template>
     <Card>
         <template #title>
-            Formulario de inscripción
+            Formulario de Inscripción
         </template>
         <template #subtitle>
             Ingrese los datos correspondientes
