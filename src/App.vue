@@ -20,5 +20,5 @@ onMounted(async() => {
     <router-view v-slot="{Component}">
         <component :is="Component" class="m-2"/>
     </router-view>
-    <Toast/>
+    <Toast :position="'top-left'"/>
 </template>

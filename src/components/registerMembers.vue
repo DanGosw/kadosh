@@ -86,11 +86,13 @@ const saveNewMember = handleSubmit(async(values) => {
 
     if ( !props.formData?.id) {
         membersStoreOptions.addNewMembers(values, clearDataForm, isClickCard.value);
+        updateVisibilityDrawer();
     }
 
     isClickCard.value = false;
-}, () => {
-    toastEvent({ severity: "error", summary: "Error al guardar", message: "Por favor, llene el formulario." });
+}, ({errors}) => {
+    const errorMessages = Object.entries(errors).map(([ field, message ]) => `${ field }: ${ message }`).join(", \n");
+    toastEvent({ summary: "Campos requeridos: ", message: errorMessages, life: 5000 });
 });
 
 const onClickCardMember = (data: InterfaceMembers) => {
@@ -117,7 +119,7 @@ watch(doc_num, () => {
             <Select fluid v-model="documenttype" @blur="documenttypeHandle($event, true)" :options="optionsDocuments"
                     optionLabel="description" option-value="id" size="large" :disabled="isClickCard"/>
         </FormItem>
-        <FormItem label="DNI" cols="12">
+        <FormItem label="DNI" cols="12" :error="errors.doc_num">
             <InputGroup>
                 <InputText fluid v-model="doc_num" @blur="doc_numHandle($event, true)" placeholder="Ingrese nro de DNI" v-key-filter.num
                            maxlength="8" :invalid="!!errors.doc_num" size="large" :disabled="isClickCard && !isClickCard"
@@ -130,15 +132,15 @@ watch(doc_num, () => {
                 </Button>
             </InputGroup>
         </FormItem>
-        <FormItem label="Nombres" cols="12">
+        <FormItem label="Nombres" cols="12" :error="errors.names">
             <InputText fluid v-model="names" @blur="namesHandle($event, true)" :invalid="!!errors.names" size="large"
                        :disabled="!wasDniChecked && documenttype === 1"/>
         </FormItem>
-        <FormItem label="Apellidos" cols="12">
+        <FormItem label="Apellidos" cols="12" :error="errors.lastnames">
             <InputText fluid v-model="lastnames" @blur="lastnamesHandle($event, true)" :invalid="!!errors.lastnames" size="large"
                        :disabled="!wasDniChecked && documenttype === 1"/>
         </FormItem>
-        <FormItem label="Género" cols="12">
+        <FormItem label="Género" cols="12" :error="errors.gender">
             <div class="flex flex-wrap items-center gap-4">
                 <div class="flex items-center gap-2">
                     <RadioButton v-model="gender" inputId="gender1" name="gender" value="M" @blur="genderHandle($event, true)"
@@ -152,15 +154,15 @@ watch(doc_num, () => {
                 </div>
             </div>
         </FormItem>
-        <FormItem label="F. de Nacimiento" cols="12">
+        <FormItem label="F. de Nacimiento" cols="12" :error="errors.gender">
             <DatePicker fluid v-model="birthdate" @blur="birthdateHandle(undefined, true)" :invalid="!!errors.birthdate" size="large"
                         date-format="d/m/yy"/>
         </FormItem>
-        <FormItem label="Celular" cols="12">
+        <FormItem label="Celular" cols="12" :error="errors.birthdate">
             <InputText fluid v-model="phone" @blur="phoneHandle($event, true)" maxlength="9" v-key-filter.num :invalid="!!errors.phone"
                        size="large"/>
         </FormItem>
-        <FormItem label="¿Perteneces a alguna iglesia?" cols="12">
+        <FormItem label="¿Perteneces a alguna iglesia?" cols="12" :error="errors.phone">
             <div class="flex flex-wrap items-center gap-4">
                 <div class="flex items-center gap-2" v-for="kindData in optionsKinds">
                     <RadioButton v-model="kind" :inputId="kindData.description" :name="kindData.description" :value="kindData.id"
@@ -170,13 +172,14 @@ watch(doc_num, () => {
                 </div>
             </div>
         </FormItem>
-        <FormItem label="Iglesia" cols="12">
+        <FormItem label="Iglesia" cols="12" :error="errors.kind">
             <Select :options="optionsChurches" fluid v-model="church" @blur="churchHandle($event, true)" filter show-clear size="large"
-                    :invalid="!!errors.church" reset-filter-on-clear reset-filter-on-hide optionLabel="description" option-value="id"/>
+                    :invalid="!!errors.church" reset-filter-on-clear reset-filter-on-hide auto-filter-focus optionLabel="description"
+                    option-value="id"/>
         </FormItem>
 
         <div class="max-cols-4">
-            <Button label="Ver Lista" severity="secondary" @click="updateVisibilityDrawer "
+            <Button label="Ver Lista" severity="secondary" @click="updateVisibilityDrawer"
                     v-if="membersStoreOptions.membersData.length >= 1" fluid>
                 <template #icon>
                     <i-material-symbols-list-alt-check/>
