@@ -1,18 +1,17 @@
-// import type { InterfaceAxiosApiNoPaginate/*, InterfaceAxiosApiResponse*/ } from "@/composable/InterfaceAxiosApiNoPaginate.ts";
+import type { InterfaceAxiosApiResponse } from "@/composable/InterfaceAxiosApiNoPaginate.ts";
 
 export interface InterfaceMembers {
-    birthdate: Date | Date[] | (Date | null)[] | null | string;
+    birthdate: Date | string;
     church: number | null;
     doc_num: string;
-    docType: number | null;
+    documenttype?: number | null;
     gender: string;
-    isMember: string;
+    kind: number | null;
     lastnames: string;
     names: string;
     phone: string;
     id?: number;
-    status: boolean
+    status: boolean;
 }
 
-// export type InterfaceResponseMembers = InterfaceAxiosApiNoPaginate<InterfaceMembers>
-// export type UsersActiosMembers = InterfaceAxiosApiResponse<InterfaceMembers>
+export type UsersActiosMembers = InterfaceAxiosApiResponse<InterfaceMembers>

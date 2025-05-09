@@ -23,7 +23,8 @@ const routes = createRouter({
                     return;
                 }
             }
-        }
+        },
+        { path: "/:catchAll(.*)", name: "Page not found", redirect: "/" }
     ],
     scrollBehavior(to) {
         if (to.hash) {
@@ -33,7 +34,7 @@ const routes = createRouter({
             };
         }
         return { top: 0 };
-    }
+    },
 });
 
 export default routes;

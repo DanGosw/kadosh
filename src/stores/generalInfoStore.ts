@@ -88,3 +88,17 @@ export const storePriceRate = defineStore("storePriceRate", {
         }
     }
 });
+
+export const storeKind = defineStore("storeKind", {
+    state: () => ({
+        kind: [] as { id: number, description: string, active: boolean }[]
+    }),
+    actions: {
+        async getKinds() {
+            const { response } = await Api.Get({ route: "kind" });
+            if (response && response.status === 200) {
+                this.kind = response.data;
+            }
+        }
+    }
+});

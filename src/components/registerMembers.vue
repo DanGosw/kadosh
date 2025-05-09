@@ -9,7 +9,7 @@ import toastEvent from "@/composable/toastEvent.ts";
 import { parseISO, isValid } from "date-fns";
 import FormItem from "@/components/formItem.vue";
 import DrawerMembersSaved from "@/components/drawerMembersSaved.vue";
-import { storeChurches, storeDocumentType } from "@/stores/generalInfoStore.ts";
+import { storeChurches, storeDocumentType, storeKind } from "@/stores/generalInfoStore.ts";
 import { type DataDNI, getDataReniec } from "@/composable/getDataReniec.ts";
 
 const refDrawerMembersSaved = ref();
@@ -25,16 +25,16 @@ const props = defineProps({
 });
 
 const formMembers = ref<InterfaceMembers>({
-    birthdate: null, church: null, doc_num: "", docType: 1, gender: "", isMember: "", lastnames: "", names: "", phone: "", status: true
+    birthdate: "", church: null, doc_num: "", documenttype: 1, gender: "", kind: null, lastnames: "", names: "", phone: "", status: true
 });
 
 const validationSchema = ref(yup.object({
     birthdate: yup.string().required("Agrega una fecha valida"),
     church: yup.string().required("Seleccione una iglesia"),
-    docType: yup.string().required("Seleccione un tipo de identificación"),
+    documenttype: yup.string().required("Seleccione un tipo de identificación"),
     doc_num: yup.string().required("Agregue un DNI"),
     gender: yup.string().required("Seleccione un género"),
-    isMember: yup.string().required("Seleccione a donde pertenece"),
+    kind: yup.string().required("Seleccione a donde pertenece"),
     lastnames: yup.string().required("Agregue sus apellidos"),
     names: yup.string().required("Agregue sus nombres"),
     phone: yup.string().required("Añada un teléfono valido")
@@ -42,18 +42,19 @@ const validationSchema = ref(yup.object({
 
 const { handleReset, handleSubmit, errors, setValues } = useForm<InterfaceMembers>({ validationSchema, initialValues: formMembers.value });
 
-const { value: birthdate, handleBlur: birthdateHandle } = useField<Date | Date[] | (Date | null)[] | null>("birthdate");
+const { value: birthdate, handleBlur: birthdateHandle } = useField<Date | null>("birthdate");
 const { value: church, handleBlur: churchHandle } = useField<string>("church");
 const { value: doc_num, handleBlur: doc_numHandle } = useField<string>("doc_num");
-const { value: docType, handleBlur: docTypeHandle } = useField<number>("docType");
+const { value: documenttype, handleBlur: documenttypeHandle } = useField<number>("documenttype");
 const { value: gender, handleBlur: genderHandle } = useField<string>("gender");
-const { value: isMember, handleBlur: isMemberHandle } = useField<string>("isMember");
+const { value: kind, handleBlur: kindHandle } = useField<number>("kind");
 const { value: lastnames, handleBlur: lastnamesHandle } = useField<string>("lastnames");
 const { value: names, handleBlur: namesHandle } = useField<string>("names");
 const { value: phone, handleBlur: phoneHandle } = useField<string>("phone");
 
 const optionsDocuments = computed(() => storeDocumentType().documentType);
 const optionsChurches = computed(() => storeChurches().churches);
+const optionsKinds = computed(() => storeKind().kind);
 
 const addDataFromReniec = async() => {
     loadingSearch.value = true;
@@ -77,9 +78,8 @@ const addDataFromReniec = async() => {
     loadingSearch.value = false;
 };
 
-
 const saveNewMember = handleSubmit(async(values) => {
-    if (docType.value === 1 && !wasDniChecked.value) {
+    if (documenttype.value === 1 && !wasDniChecked.value && !isClickCard.value) {
         toastEvent({ severity: "warn", summary: "Consulta pendiente", message: "Debes hacer la búsqueda por DNI antes de continuar." });
         return;
     }
@@ -95,7 +95,7 @@ const saveNewMember = handleSubmit(async(values) => {
 
 const onClickCardMember = (data: InterfaceMembers) => {
     const parsedDate = typeof data.birthdate === "string" ? parseISO(data.birthdate) : data.birthdate;
-    setValues({ ...data, birthdate: parsedDate && isValid(parsedDate) ? parsedDate : null });
+    setValues({ ...data, birthdate: parsedDate && isValid(parsedDate) ? parsedDate : "" });
     isClickCard.value = true;
 };
 
@@ -114,14 +114,15 @@ watch(doc_num, () => {
 <template>
     <div class="mx-auto max-w-screen-sm align-items-form sm:px-6 md:px-8 lg:px-10">
         <FormItem label="Tipo de Documento" cols="12">
-            <Select fluid v-model="docType" @blur="docTypeHandle($event, true)" :options="optionsDocuments" optionLabel="description"
-                    option-value="id" size="large" :disabled="isClickCard"/>
+            <Select fluid v-model="documenttype" @blur="documenttypeHandle($event, true)" :options="optionsDocuments"
+                    optionLabel="description" option-value="id" size="large" :disabled="isClickCard"/>
         </FormItem>
         <FormItem label="DNI" cols="12">
             <InputGroup>
                 <InputText fluid v-model="doc_num" @blur="doc_numHandle($event, true)" placeholder="Ingrese nro de DNI" v-key-filter.num
-                           maxlength="8" :invalid="!!errors.doc_num" size="large" :disabled="isClickCard" @keyup.enter="addDataFromReniec"/>
-                <Button label="Buscar" :disabled="isClickCard || loadingSearch" v-if="docType === 1" @click="addDataFromReniec"
+                           maxlength="8" :invalid="!!errors.doc_num" size="large" :disabled="isClickCard && !isClickCard"
+                           @keyup.enter="addDataFromReniec"/>
+                <Button label="Buscar" :disabled="isClickCard || loadingSearch" v-if="documenttype === 1" @click="addDataFromReniec"
                         :loading="loadingSearch">
                     <template #icon>
                         <i-material-symbols-database-search/>
@@ -131,11 +132,11 @@ watch(doc_num, () => {
         </FormItem>
         <FormItem label="Nombres" cols="12">
             <InputText fluid v-model="names" @blur="namesHandle($event, true)" :invalid="!!errors.names" size="large"
-                       :disabled="!wasDniChecked && docType === 1"/>
+                       :disabled="!wasDniChecked && documenttype === 1"/>
         </FormItem>
         <FormItem label="Apellidos" cols="12">
             <InputText fluid v-model="lastnames" @blur="lastnamesHandle($event, true)" :invalid="!!errors.lastnames" size="large"
-                       :disabled="!wasDniChecked && docType === 1"/>
+                       :disabled="!wasDniChecked && documenttype === 1"/>
         </FormItem>
         <FormItem label="Género" cols="12">
             <div class="flex flex-wrap items-center gap-4">
@@ -161,25 +162,11 @@ watch(doc_num, () => {
         </FormItem>
         <FormItem label="¿Perteneces a alguna iglesia?" cols="12">
             <div class="flex flex-wrap items-center gap-4">
-                <div class="flex items-center gap-2">
-                    <RadioButton v-model="isMember" inputId="isMember1" name="isMember" value="Pastor" :invalid="!!errors.isMember"
-                                 size="large" @blur="isMemberHandle($event, true)"/>
-                    <label for="isMember1">Pastor</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <RadioButton v-model="isMember" inputId="isMember2" name="isMember" value="Líder" :invalid="!!errors.isMember"
-                                 size="large" @blur="isMemberHandle($event, true)"/>
-                    <label for="isMember2">Líder</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <RadioButton v-model="isMember" inputId="isMember3" name="isMember" value="Miembro Activo" :invalid="!!errors.isMember"
-                                 size="large" @blur="isMemberHandle($event, true)"/>
-                    <label for="isMember3">Miembro Activo</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <RadioButton v-model="isMember" inputId="isMember4" name="isMember" value="Invitado" :invalid="!!errors.isMember"
-                                 size="large" @blur="isMemberHandle($event, true)"/>
-                    <label for="isMember4">Invitado</label>
+                <div class="flex items-center gap-2" v-for="kindData in optionsKinds">
+                    <RadioButton v-model="kind" :inputId="kindData.description" :name="kindData.description" :value="kindData.id"
+                                 :invalid="!!errors.kind"
+                                 size="large" @blur="kindHandle($event, true)"/>
+                    <label :for="kindData.description">{{ kindData.description }}</label>
                 </div>
             </div>
         </FormItem>

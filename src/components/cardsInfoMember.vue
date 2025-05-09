@@ -2,7 +2,7 @@
 import type { InterfaceMembers } from "@/composable/interfaceMembers";
 import { useMembersStore } from "@/stores/storeMembers.ts";
 import { format, isValid, parseISO } from "date-fns";
-import { storeChurches } from "../stores/generalInfoStore.ts";
+import { storeChurches, storeKind } from "../stores/generalInfoStore.ts";
 
 const membersStoreOptions = useMembersStore();
 
@@ -11,9 +11,9 @@ const props = withDefaults(defineProps<InterfaceMembers>(), {
     names: "",
     lastnames: "",
     gender: "",
-    birthdate: null,
+    birthdate: '',
     phone: "",
-    isMember: "",
+    kind: null,
     church: null,
     docType: null
 });
@@ -31,7 +31,7 @@ const convertDate = (data: string | Date | Date[] | (Date | null)[] | null) => {
 </script>
 
 <template>
-    <div class="relative w-full max-w-sm cursor-pointer rounded-lg border bg-white p-4 shadow-md dark:bg-surface-800 dark:border-surface-700">
+    <div class="relative w-full cursor-pointer rounded-lg border bg-white p-4 shadow-md dark:bg-surface-800 dark:border-surface-700">
         <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-300">
             <div class="flex items-center gap-1">
                 <i-material-symbols-id-card-outline-rounded class="text-base"/>
@@ -67,7 +67,7 @@ const convertDate = (data: string | Date | Date[] | (Date | null)[] | null) => {
                 <i-material-symbols-call class="text-base"/>
                 <span>{{ props.phone }}</span>
             </div>
-            <span class="font-medium text-primary-500">{{ props.isMember }}</span>
+            <span class="font-medium text-primary-500">{{ storeKind().kind.find((ch) => ch.id === props.kind)?.description }}</span>
         </div>
 
         <!-- Iglesia -->

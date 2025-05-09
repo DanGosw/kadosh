@@ -13,7 +13,7 @@ import { fileToBase64 } from "@/composable/convertImageToUpload.ts";
 import { format, isDate, parseISO } from "date-fns";
 import { storeActivities, storePaymentMethod, storePriceRate, storeRate } from "@/stores/generalInfoStore.ts";
 import ViewPaymentMethods from "@/components/viewPaymentMethods.vue";
-import routes from "@/router/routes.ts";
+import router from "@/router/routes.ts";
 
 type VoucherImageType = { file: File; objectURL: string; };
 
@@ -35,7 +35,7 @@ const validationSchema = ref(yup.object({
     }).nullable()
 }));
 
-const { handleSubmit, errors } = useForm<{ voucherfile: VoucherImageType | {}, paymentmethod: null | number }>({
+const { handleSubmit, errors, resetForm } = useForm<{ voucherfile: VoucherImageType | {}, paymentmethod: null | number, tarifa: number }>({
     validationSchema, initialValues: { voucherfile: {}, paymentmethod: null }
 });
 
@@ -85,7 +85,9 @@ const saveAllMembers = handleSubmit(async() => {
         if (response && response?.status === 201) {
             toastEvent({ severity: "success", summary: `${ response.data.message }` });
             storeDataMembers.membersData = [];
-            await routes.push({ name: "suscribe" });
+            await router.push({ name: "suscribe" });
+            refVoucherImage.value.remove();
+            resetForm();
             loadingSave.value = false;
         } else {
             console.error("Fail", response);
@@ -132,7 +134,7 @@ const onValueSelectPayment = (id: number) => {
                 </div>
                 <FormItem label="Método de pago" cols="12" :error="errors.paymentmethod">
                     <Select v-model="paymentmethod" :options="filterPaymentMethods" optionLabel="description" option-value="id" fluid
-                            @value-change="(value) => onValueSelectPayment(value)"/>
+                            size="large" @value-change="(value) => onValueSelectPayment(value)"/>
                 </FormItem>
                 <FormItem cols="12" hide-error hide-label v-if="paymentmethod">
                     <view-payment-methods :name-account="dataForViewPayment.description" :number-account="dataForViewPayment.account"
