@@ -55,6 +55,7 @@
 /* Media */
 @import 'galleria.css';
 @import 'image.css';
+@import 'carousel.css';
 
 /* Misc */
 @import 'badge.css';

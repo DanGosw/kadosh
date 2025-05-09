@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import happyYoung from "@/assets/images/happyYoung.jpg";
+import happyYoung from "@/assets/images/imgYoungs.jpg";
 
 </script>
 
@@ -18,14 +18,14 @@ import happyYoung from "@/assets/images/happyYoung.jpg";
             <div class="w-full md:w-1/2 text-white bg-cover bg-center bg-no-repeat rounded-2xl"
                  :style="`background-image: url(${happyYoung})`">
                 <div class="backdrop-blur-sm bg-black/40 p-6 rounded-2xl">
-                    <div class="text-center text-2xl font-info md:text-4xl mb-4">
+                    <div class="text-center text-2xl font-info md:text-5xl mb-4">
                         ¿Dónde?
                     </div>
-                    <span class="block text-center font-semibold">
+                    <span class="block text-center text-2xl">
                         El congreso se realizará en Perú, en la ciudad de Tarapoto, conocida también como la “Ciudad de las palmeras” 
                         por su clima tropical, sus destinos históricos y turísticos maravillosos. <br/><br/>
                         Estaremos viviendo toda esta experiencia de <span class="text-primary-500">Kadosh</span> 
-                        en el “Martin de la Riva y Herrera”. <br/> Jirón San Martín 2193 - Barrio Ancoallo, Tarapoto 220904, Perú.
+                        en la “I.E Martin de la Riva y Herrera”. <br/> Jirón San Martín 2193 - Barrio Ancoallo, Tarapoto 220904, Perú.
                     </span>
                 </div>
             </div>
